@@ -10,8 +10,11 @@ import at.fhjoanneum.picturl.model.PictUrlImage
 @Dao
 interface PictUrlImageDao {
     @Query("select * from $PICTURL_IMAGE_TABLE_NAME")
-    fun getAll(): List<PictUrlImage>
+    suspend fun getAll(): List<PictUrlImage>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(image: PictUrlImage)
+    suspend fun insert(image: PictUrlImage)
+
+    @Query("DELETE FROM $PICTURL_IMAGE_TABLE_NAME WHERE id = :id")
+    suspend fun delete(id: String)
 }

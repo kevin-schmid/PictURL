@@ -19,13 +19,12 @@ class PictUrlImage {
 
     companion object {
         @JvmStatic
-        fun from(data: PostImageResponseData): PictUrlImage {
-            val img = PictUrlImage()
-            img.id = data.id
-            img.deleteHash = data.deletehash
-            img.link = data.link
-            img.title = data.title
-            return img
-        }
+        fun from(data: PostImageResponseData) =
+            PictUrlImage().apply {
+                id = data.id
+                deleteHash = data.deletehash
+                link = data.link
+                title = data.title
+            }
     }
 }

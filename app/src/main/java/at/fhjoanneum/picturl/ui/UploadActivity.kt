@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import at.fhjoanneum.picturl.EXTRA_IMAGE_URL
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
+import at.fhjoanneum.picturl.service.UploadDto
 import at.fhjoanneum.picturl.service.UploadService
 import kotlinx.coroutines.*
 
@@ -27,16 +27,16 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     private fun uploadImage(imageUri: Uri) {
-        val imageBinary = this.contentResolver.openInputStream(imageUri)?.buffered()?.use { it.readBytes() }!!
+        val imageBinary =
+            this.contentResolver.openInputStream(imageUri)?.buffered()?.use { it.readBytes() }!!
         GlobalScope.launch(Dispatchers.Main) {
-            val response = UploadService.upload(imageBinary)
-            val image = PictUrlImage.from(response.data!!)
-            image.localUri = imageUri
+            val response = UploadService.upload(UploadDto().apply {
+                title = "Test Title"
+                image = imageBinary
+            })
+            val image = PictUrlImage.from(response.data!!).apply { localUri = imageUri }
             PictUrlDatabase.getDatabase(this@UploadActivity).imageDao().insert(image)
-            val successIntent = Intent(this@UploadActivity, DetailActivity::class.java)
-                .putExtra(Intent.EXTRA_STREAM, imageUri)
-                .putExtra(EXTRA_IMAGE_URL, image.link)
-            startActivity(successIntent)
+            startActivity(DetailActivity.createIntent(this@UploadActivity, image))
         }
     }
 

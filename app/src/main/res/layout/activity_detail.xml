@@ -20,11 +20,26 @@
 
     </androidx.cardview.widget.CardView>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="80pt">
+
     <TextView
         android:id="@+id/detailTextView"
         android:layout_width="match_parent"
-        android:layout_height="80pt"
+        android:layout_height="match_parent"
         android:scaleType="fitCenter"
         android:layout_margin="10dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/detailActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_baseline_delete_24"
+        android:layout_margin="16dp"
+        />
+
+    </FrameLayout>
 
 </LinearLayout>

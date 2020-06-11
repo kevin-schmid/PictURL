@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.model.PictUrlImage
 
-class ImagesListAdapter(private var images: List<PictUrlImage>, private var clickListener: ImageClickListener) :
+class ImagesListAdapter(
+    private var images: List<PictUrlImage>,
+    private var clickListener: ImageClickListener
+) :
     RecyclerView.Adapter<ImagesListAdapter.ImageViewHolder>() {
 
-    class ImageViewHolder(itemView: View, private var clickListener: ImageClickListener) : RecyclerView.ViewHolder(itemView) {
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val view: View = itemView.findViewById(R.id.imageListItemCardView)
         private val title: TextView = itemView.findViewById(R.id.imageListItemTitle)
         private val link: TextView = itemView.findViewById(R.id.imageListItemLink)
@@ -27,13 +30,12 @@ class ImagesListAdapter(private var images: List<PictUrlImage>, private var clic
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ImageViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.image_list_item, parent, false),
-            clickListener
+            LayoutInflater.from(parent.context).inflate(R.layout.image_list_item, parent, false)
         )
 
-    override fun getItemCount(): Int = images.size
+    override fun getItemCount() = images.size
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) =
         holder.bind(images[position])
