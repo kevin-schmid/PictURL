@@ -1,6 +1,6 @@
 package at.fhjoanneum.picturl.ui
 
-import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -103,7 +103,5 @@ class MainActivity : AppCompatActivity(), ImageClickListener {
     override fun onItemClicked(item: PictUrlImage) =
         startActivity(DetailActivity.createIntent(this, item))
 
-    private fun doMySearch (query: String){
-
-    }
+    override fun getContext(): Context = this
 }

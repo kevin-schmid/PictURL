@@ -8,15 +8,18 @@
     android:foreground="?attr/selectableItemBackground"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/imageListLayout"
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingEnd="200dp">
 
             <TextView
                 android:id="@+id/imageListItemTitle"
@@ -24,31 +27,38 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:textSize="25sp"
-                tools:text="Image Title"/>
+                android:maxLines="2"
+                android:minLines="2"
+                android:ellipsize="end"
+                tools:text="Image Title fe fe fe fe fe fe feffffffffffffff"/>
 
             <TextView
                 android:id="@+id/imageListItemLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                tools:text="imgur.com/link"/>
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="imgur.com/linkrgewefwefwefwefwefwefwefwefrged"/>
 
             <TextView
                 android:id="@+id/imageListItemTags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                tools:text="much wow"/>
+                android:maxLines="3"
+                android:ellipsize="end"
+                tools:text="much wow, so wow, very wow, amazingly wow, enormous wow, extremely wow"/>
         </LinearLayout>
 
         <ImageView
             android:id="@+id/imageListItemImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:padding="10dp"
             android:src="@drawable/doge"
-            android:layout_gravity="end"/>
+            android:layout_alignParentEnd="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
