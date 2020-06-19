@@ -31,10 +31,12 @@ class DetailActivity : AppCompatActivity() {
         val imageId = intent.getStringExtra(EXTRA_IMAGE_ID)!!
         val imageHash = intent.getStringExtra(EXTRA_IMAGE_DELETE_HASH)!!
         val imageTitle = intent.getStringExtra(EXTRA_IMAGE_TITLE)
+        val imageDescr = intent.getStringExtra(EXTRA_IMAGE_DESCR)
 
         findViewById<ImageView>(R.id.detailImageView).setImageURI(imageUri)
         findViewById<Button>(R.id.detailButton).text = imageUrl
         findViewById<TextView>(R.id.detailTitleTextView).text = imageTitle
+        findViewById<TextView>(R.id.detailItemDescr).text = imageDescr
 
         findViewById<FloatingActionButton>(R.id.detailActionButton).setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
@@ -59,6 +61,7 @@ class DetailActivity : AppCompatActivity() {
         const val EXTRA_IMAGE_ID = "Extra_Image_ID"
         const val EXTRA_IMAGE_DELETE_HASH = "Extra_Image_DeleteHash"
         const val EXTRA_IMAGE_TITLE = "Extra_Image_Title"
+        const val EXTRA_IMAGE_DESCR = "Extra_Image_Descr"
 
         fun createIntent(context: Context, image: PictUrlImage) =
             Intent(context, DetailActivity::class.java)
@@ -67,6 +70,7 @@ class DetailActivity : AppCompatActivity() {
                 .putExtra(EXTRA_IMAGE_ID, image.id)
                 .putExtra(EXTRA_IMAGE_DELETE_HASH, image.deleteHash)
                 .putExtra(EXTRA_IMAGE_TITLE, image.title)
+                .putExtra(EXTRA_IMAGE_DESCR, image.descr)
     }
 
     fun toClipboard(v: View){
