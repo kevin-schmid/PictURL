@@ -24,6 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 
 class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
+    var localImageUri: Uri = Uri.EMPTY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload)
@@ -47,7 +49,10 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         if (imageUri == null) {
             showError()
         } else {
-            findViewById<ImageView>(R.id.uploadImageView).setImageURI(imageUri)
+            val imageBinary =
+                this.contentResolver.openInputStream(imageUri)?.buffered()?.use { it.readBytes() }!!
+            localImageUri = createThumbnail(imageBinary)
+            findViewById<ImageView>(R.id.uploadImageView).setImageURI(localImageUri)
             findViewById<View>(R.id.uploadImageButton).setOnClickListener {
                 if(findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()){
                     Toast.makeText(applicationContext,"Enter Title", Toast.LENGTH_SHORT).show()
@@ -71,10 +76,9 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 title = imageTitle
                 image = imageBinary
             })
-            createThumbnail(response.data!!.id, imageBinary)
             val pictUrlImage = PictUrlImage.from(response.data!!).apply {
-                this.localUri = imageUri
                 this.descr = findViewById<TextView>(R.id.uploadItemDescr).text.toString()
+                this.localUri = localImageUri
             }
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("link", pictUrlImage.link)
@@ -85,12 +89,14 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         }
     }
 
-    private fun createThumbnail(imageId: String, imageBinary: ByteArray) {
+    private fun createThumbnail(imageBinary: ByteArray): Uri {
         val imgBitmap = BitmapFactory.decodeByteArray(imageBinary, 0, imageBinary.size)
         val thumbnail = ThumbnailUtils.extractThumbnail(imgBitmap, 500, 500)
-        this@UploadActivity.openFileOutput(imageId, Context.MODE_PRIVATE).use {
+        val fileName = System.currentTimeMillis().toString()
+        this@UploadActivity.openFileOutput(fileName, Context.MODE_PRIVATE).use {
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, it)
         }
+        return Uri.fromFile(this.filesDir).buildUpon().appendPath(fileName).build()
     }
 
     private fun showError() {
