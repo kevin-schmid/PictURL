@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white"
-
     android:gravity="center">
 
     <ProgressBar
@@ -38,7 +37,7 @@
             <EditText
                     android:id="@+id/uploadEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="50sp"
+                    android:layout_height="40sp"
                     android:padding="5dp"
                     android:textSize="25sp"
                     android:hint="Image Title"
@@ -48,10 +47,10 @@
                 <ImageView
                     android:id="@+id/uploadImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="50sp"
-                    android:layout_marginBottom="70dp"
-                    android:padding="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40sp"
+                    android:layout_marginBottom="85dp"
+                    android:padding="5dp"
                     android:src="@drawable/doge" />
 
                 <LinearLayout
@@ -71,7 +70,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:hint="Enter Description"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:hint="@string/enter_description"
                             android:imeOptions="actionDone"
                             android:singleLine="true" />
 
@@ -82,8 +83,9 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.9"
                         android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:maxLines="2"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:maxLines="3"
                         android:textSize="20sp"
                         android:ellipsize="end"
                         android:layout_gravity="center"
