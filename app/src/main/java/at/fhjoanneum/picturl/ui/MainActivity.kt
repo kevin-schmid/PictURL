@@ -14,6 +14,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.fhjoanneum.picturl.MAIN_ACTIVITY_RESULT_PICK_IMAGE
@@ -22,6 +23,8 @@ import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
 import at.fhjoanneum.picturl.ui.adapter.ImageClickListener
+import at.fhjoanneum.picturl.ui.adapter.ImageSwipeController
+import at.fhjoanneum.picturl.ui.adapter.ImageSwipeListener
 import at.fhjoanneum.picturl.ui.adapter.ImagesListAdapter
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +35,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity(), ImageClickListener {
+class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener {
     private lateinit var recyclerView: RecyclerView
     private var photoURI: Uri = Uri.EMPTY
 
@@ -41,6 +44,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener {
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.mainRecyclerView)
+        ItemTouchHelper(ImageSwipeController(this, this)).attachToRecyclerView(recyclerView)
         val speedDialView = findViewById<SpeedDialView>(R.id.mainActionButton)
         speedDialView.inflate(R.menu.menu_main_action)
         speedDialView.setOnActionSelectedListener { actionItem ->
@@ -174,4 +178,14 @@ class MainActivity : AppCompatActivity(), ImageClickListener {
     }
 
     override fun getContext(): Context = this
+
+    override fun onRightSwipe(position: Int) {
+        GlobalScope.launch(Dispatchers.Main) {
+            recyclerView.adapter = ImagesListAdapter(
+                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll(),
+                this@MainActivity
+            )
+            recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        }
+    }
 }

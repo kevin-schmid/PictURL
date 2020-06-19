@@ -45,4 +45,5 @@ class ImagesListAdapter(
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) =
         holder.bind(images[position])
 
+    fun getPictUrlImage(index: Int): PictUrlImage = images[index]
 }
