@@ -33,6 +33,9 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     private fun uploadImage(imageUri: Uri) {
+        findViewById<View>(R.id.uploadMainLayout).visibility = View.GONE
+        findViewById<View>(R.id.uploadProgressBar).visibility = View.VISIBLE
+
         val imageBinary =
             this.contentResolver.openInputStream(imageUri)?.buffered()?.use { it.readBytes() }!!
         val imageTitle = findViewById<EditText>(R.id.uploadEditText).text.toString()
