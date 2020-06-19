@@ -1,52 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center" >
 
-    <androidx.cardview.widget.CardView
+    <ProgressBar
+        android:id="@+id/uploadProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/uploadMainLayout"
+        android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"
-        android:layout_margin="10dp"
-        android:paddingTop="50dp">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:layout_margin="10dp"
+            android:paddingTop="50dp">
 
-            <EditText
-                android:id="@+id/uploadEditText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50sp"
-                android:padding="5dp"
-                android:textSize="25sp"
-                android:hint="Image Title"
-                android:imeOptions="actionDone"
-                android:singleLine="true" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/uploadImageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:src="@drawable/doge" />
+                <EditText
+                    android:id="@+id/uploadEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="50sp"
+                    android:padding="5dp"
+                    android:textSize="25sp"
+                    android:hint="Image Title"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true" />
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/uploadImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:src="@drawable/doge" />
 
+            </LinearLayout>
 
+        </androidx.cardview.widget.CardView>
 
+        <ImageButton
+            android:id="@+id/uploadImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="80pt"
+            android:src="@drawable/logo"
+            android:scaleType="fitCenter"
+            android:layout_margin="10dp"/>
 
-    </androidx.cardview.widget.CardView>
-
-    <ImageButton
-        android:id="@+id/uploadImageButton"
-        android:layout_width="match_parent"
-        android:layout_height="80pt"
-        android:src="@drawable/logo"
-        android:scaleType="fitCenter"
-        android:layout_margin="10dp"/>
-
-</LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
