@@ -1,4 +1,5 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:width="16dp"
     android:height="16dp"
     android:viewportWidth="16"
@@ -9,11 +10,13 @@
   <group>
     <path
         android:pathData="m10.792,8.0379l1.5,-1.5c0,-0 1.5,-1.5 3,-0c1.5,1.5 0,3 0,3l-2,2c0,-0 -1.5,1.5 -3,-0c-0.2813,-0.2813 -0.4555,-0.655 -0.4555,-0.655l0.8382,-0.837c0,-0 -0.0338,0.341 0.3672,0.742c0,-0 0.75,0.75 1.5,-0l2,-2c0,-0 0.75,-0.75 0,-1.5c-0.75,-0.75 -1.5,-0 -1.5,-0l-0.9323,0.9323c0,-0 -0.4635,-0.3803 -1.4115,-0.0885l0.0938,-0.0938z"
-        android:fillColor="#dd2c00"
-        android:fillType="nonZero"/>
+        android:fillColor="@color/colorPrimaryDark"
+        android:fillType="nonZero"
+        tools:ignore="VectorRaster" />
     <path
         android:pathData="m12.2531,12.5379l-1.5,1.5c0,-0 -1.5,1.5 -3,-0c-1.5,-1.5 0,-3 0,-3l2,-2c0,-0 1.5,-1.5 3,-0c0.2813,0.2813 0.4555,0.655 0.4555,0.655l-0.8382,0.8372c0,-0 0.0338,-0.3413 -0.3672,-0.7423c0,-0 -0.75,-0.75 -1.5,-0l-2,2c0,-0 -0.75,0.75 0,1.5c0.75,0.75 1.5,-0 1.5,-0l0.9323,-0.9323c0,-0 0.4635,0.38 1.4115,0.0885l-0.0938,0.0938z"
-        android:fillColor="#dd2c00"
-        android:fillType="nonZero"/>
+        android:fillColor="@color/colorPrimaryDark"
+        android:fillType="nonZero"
+        tools:ignore="VectorRaster" />
   </group>
 </vector>

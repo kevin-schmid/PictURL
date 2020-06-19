@@ -1,5 +1,7 @@
 package at.fhjoanneum.picturl.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +12,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
@@ -28,7 +31,14 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             showError()
         } else {
             findViewById<ImageView>(R.id.uploadImageView).setImageURI(imageUri)
-            findViewById<View>(R.id.uploadImageButton).setOnClickListener { uploadImage(imageUri) }
+            findViewById<View>(R.id.uploadImageButton).setOnClickListener {
+                if(findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()){
+                    Toast.makeText(applicationContext,"Enter Title", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    uploadImage(imageUri)
+                }
+            }
         }
     }
 
@@ -48,6 +58,10 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val pictUrlImage = PictUrlImage.from(response.data!!).apply {
                 this.localUri = imageUri
             }
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("link", pictUrlImage.link)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(applicationContext,"Copied to Clipboard", Toast.LENGTH_SHORT).show()
             PictUrlDatabase.getDatabase(this@UploadActivity).imageDao().insert(pictUrlImage)
             startActivity(DetailActivity.createIntent(this@UploadActivity, pictUrlImage))
         }

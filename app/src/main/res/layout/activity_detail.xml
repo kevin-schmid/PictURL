@@ -4,6 +4,8 @@
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
+
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.cardview.widget.CardView
@@ -41,12 +43,21 @@
         android:layout_width="match_parent"
         android:layout_height="80pt">
 
-    <TextView
-        android:id="@+id/detailTextView"
+    <Button
+        android:id="@+id/detailButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:onClick="toClipboard"
+        android:textAllCaps="false"
+        android:background="@android:color/white"
+        android:foreground="?attr/selectableItemBackground"
+        tools:text="https://i.imgur.com/4xvUK2x.jpg"
+/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/detailActionButton"

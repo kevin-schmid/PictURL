@@ -1,11 +1,16 @@
 package at.fhjoanneum.picturl.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
@@ -28,7 +33,7 @@ class DetailActivity : AppCompatActivity() {
         val imageTitle = intent.getStringExtra(EXTRA_IMAGE_TITLE)
 
         findViewById<ImageView>(R.id.detailImageView).setImageURI(imageUri)
-        findViewById<TextView>(R.id.detailTextView).text = imageUrl
+        findViewById<Button>(R.id.detailButton).text = imageUrl
         findViewById<TextView>(R.id.detailTitleTextView).text = imageTitle
 
         findViewById<FloatingActionButton>(R.id.detailActionButton).setOnClickListener {
@@ -53,5 +58,13 @@ class DetailActivity : AppCompatActivity() {
                 .putExtra(EXTRA_IMAGE_ID, image.id)
                 .putExtra(EXTRA_IMAGE_DELETE_HASH, image.deleteHash)
                 .putExtra(EXTRA_IMAGE_TITLE, image.title)
+    }
+
+    fun toClipboard(v: View){
+        val tv = findViewById<Button>(R.id.detailButton)
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("link", tv.text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this,"Copied to Clipboard", Toast.LENGTH_SHORT).show();
     }
 }

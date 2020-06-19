@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
+
     android:gravity="center" >
 
     <ProgressBar
@@ -56,8 +58,10 @@
             android:id="@+id/uploadImageButton"
             android:layout_width="match_parent"
             android:layout_height="80pt"
+            android:background="@android:color/white"
             android:src="@drawable/logo"
             android:scaleType="fitCenter"
+            android:foreground="?attr/selectableItemBackground"
             android:layout_margin="10dp"/>
 
     </LinearLayout>
