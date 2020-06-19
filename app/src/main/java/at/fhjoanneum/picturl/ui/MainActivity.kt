@@ -1,5 +1,7 @@
 package at.fhjoanneum.picturl.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -165,9 +167,10 @@ class MainActivity : AppCompatActivity(), ImageClickListener {
         startActivity(DetailActivity.createIntent(this, item))
 
     override fun onItemLongClicked(item: PictUrlImage) {
-        val openURL = Intent(Intent.ACTION_VIEW)
-        openURL.data = Uri.parse(item.link)
-        startActivity(openURL)
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("link", item.link)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this,"Copied to Clipboard", Toast.LENGTH_SHORT).show()
     }
 
     override fun getContext(): Context = this

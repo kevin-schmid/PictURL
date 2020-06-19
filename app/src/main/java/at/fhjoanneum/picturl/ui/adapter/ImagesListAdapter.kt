@@ -1,6 +1,5 @@
 package at.fhjoanneum.picturl.ui.adapter
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,8 +25,7 @@ class ImagesListAdapter(
         fun bind(image: PictUrlImage) {
             title.text = image.title
             link.text = image.link
-            val localImagePath = Uri.fromFile(clickListener.getContext().filesDir).buildUpon().appendPath(image.id).build()
-            imageView.setImageURI(localImagePath)
+            imageView.setImageURI(image.localUri)
             view.setOnClickListener { clickListener.onItemClicked(image) }
             view.setOnLongClickListener {
                 clickListener.onItemLongClicked(image)
