@@ -11,11 +11,14 @@ import at.fhjoanneum.picturl.service.PostImageResponseData
 class PictUrlImage {
     @PrimaryKey
     @NonNull
-    var id: String = ""
-    var deleteHash: String = ""
-    var link: String = ""
-    var title: String = ""
-    var localUri: Uri = Uri.EMPTY
+    lateinit var id: String
+    @NonNull
+    lateinit var deleteHash: String
+    @NonNull
+    lateinit var link: String
+    @NonNull
+    lateinit var title: String
+    lateinit var localUri: Uri
 
     companion object {
         @JvmStatic
