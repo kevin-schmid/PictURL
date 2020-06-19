@@ -43,6 +43,15 @@ class DetailActivity : AppCompatActivity() {
                 startActivity(Intent(this@DetailActivity, MainActivity::class.java))
             }
         }
+
+        findViewById<Button>(R.id.detailButton).setOnLongClickListener {
+            val tv = findViewById<Button>(R.id.detailButton)
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(tv.text.toString())
+            startActivity(openURL)
+            true
+        }
+
     }
 
     companion object {

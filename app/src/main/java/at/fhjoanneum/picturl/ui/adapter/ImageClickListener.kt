@@ -5,5 +5,6 @@ import at.fhjoanneum.picturl.model.PictUrlImage
 
 interface ImageClickListener {
     fun onItemClicked(item: PictUrlImage)
+    fun onItemLongClicked(item: PictUrlImage)
     fun getContext(): Context
 }

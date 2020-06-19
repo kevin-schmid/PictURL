@@ -29,7 +29,13 @@ class ImagesListAdapter(
             val localImagePath = Uri.fromFile(clickListener.getContext().filesDir).buildUpon().appendPath(image.id).build()
             imageView.setImageURI(localImagePath)
             view.setOnClickListener { clickListener.onItemClicked(image) }
+            view.setOnLongClickListener {
+                clickListener.onItemLongClicked(image)
+                true
+            }
+
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

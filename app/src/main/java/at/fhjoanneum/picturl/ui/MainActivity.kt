@@ -2,10 +2,12 @@ package at.fhjoanneum.picturl.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -102,6 +104,12 @@ class MainActivity : AppCompatActivity(), ImageClickListener {
 
     override fun onItemClicked(item: PictUrlImage) =
         startActivity(DetailActivity.createIntent(this, item))
+
+    override fun onItemLongClicked(item: PictUrlImage) {
+        val openURL = Intent(Intent.ACTION_VIEW)
+        openURL.data = Uri.parse(item.link)
+        startActivity(openURL)
+    }
 
     override fun getContext(): Context = this
 }
