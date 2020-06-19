@@ -17,4 +17,7 @@ interface PictUrlImageDao {
 
     @Query("DELETE FROM $PICTURL_IMAGE_TABLE_NAME WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("select * from $PICTURL_IMAGE_TABLE_NAME where title like :title")
+    suspend fun getFiltered(title: String): List<PictUrlImage>
 }
