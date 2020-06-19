@@ -20,12 +20,13 @@ class ImagesListAdapter(
         private val view: View = itemView.findViewById(R.id.imageListItemCardView)
         private val title: TextView = itemView.findViewById(R.id.imageListItemTitle)
         private val link: TextView = itemView.findViewById(R.id.imageListItemLink)
-        private val tags: TextView = itemView.findViewById(R.id.imageListItemTags)
+        private val descr: TextView = itemView.findViewById(R.id.imageListItemDescr)
         private val imageView: ImageView = itemView.findViewById(R.id.imageListItemImageView)
 
         fun bind(image: PictUrlImage) {
             title.text = image.title
             link.text = image.link
+            descr.text = image.descr
             val localImagePath = Uri.fromFile(clickListener.getContext().filesDir).buildUpon().appendPath(image.id).build()
             imageView.setImageURI(localImagePath)
             view.setOnClickListener { clickListener.onItemClicked(image) }

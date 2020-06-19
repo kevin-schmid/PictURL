@@ -9,16 +9,18 @@ import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
 import at.fhjoanneum.picturl.service.UploadDto
 import at.fhjoanneum.picturl.service.UploadService
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 
 class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
@@ -26,6 +28,21 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload)
         val imageUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+
+        findViewById<FloatingActionButton>(R.id.uploadActionButton).setOnClickListener {
+            findViewById<FrameLayout>(R.id.uploadFrameLayout).visibility = View.VISIBLE
+        }
+
+        findViewById<EditText>(R.id.uploadEditTextDescr).setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                findViewById<FrameLayout>(R.id.uploadFrameLayout).visibility = View.GONE
+                findViewById<TextView>(R.id.uploadItemDescr).text = findViewById<EditText>(R.id.uploadEditTextDescr).text.toString()
+                hideKeyboard(v)
+                true
+            } else {
+                false
+            }
+        }
 
         if (imageUri == null) {
             showError()
@@ -57,6 +74,7 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             createThumbnail(response.data!!.id, imageBinary)
             val pictUrlImage = PictUrlImage.from(response.data!!).apply {
                 this.localUri = imageUri
+                this.descr = findViewById<TextView>(R.id.uploadItemDescr).text.toString()
             }
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("link", pictUrlImage.link)
@@ -79,5 +97,11 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         TODO("Not yet implemented")
     }
 
+    private fun hideKeyboard(view: View) {
+        view?.apply {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 
 }

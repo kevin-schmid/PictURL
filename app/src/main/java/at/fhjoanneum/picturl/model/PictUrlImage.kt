@@ -19,6 +19,7 @@ class PictUrlImage {
     @NonNull
     lateinit var title: String
     lateinit var localUri: Uri
+    lateinit var descr: String
 
     companion object {
         @JvmStatic
