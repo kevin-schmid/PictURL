@@ -9,9 +9,10 @@ object ImgurApiSimulation : ImgurApi {
     ) = PostImageResponse().apply {
         success = true
         data = PostImageResponseData().apply {
-            id = "" + System.currentTimeMillis()
-            link = "https://i.imgur.com/Kvd00L6.jpg"
-            deletehash = "delete_me"
+            this.id = "" + System.currentTimeMillis()
+            this.title = title.body().toString()
+            this.link = "https://i.imgur.com/Kvd00L6.jpg"
+            this.deletehash = "delete_me"
         }
     }
 
