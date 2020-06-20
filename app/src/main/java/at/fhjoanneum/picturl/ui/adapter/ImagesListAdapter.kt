@@ -10,7 +10,7 @@ import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.model.PictUrlImage
 
 class ImagesListAdapter(
-    private var images: List<PictUrlImage>,
+    private var images: MutableList<PictUrlImage>,
     private var clickListener: ImageClickListener
 ) :
     RecyclerView.Adapter<ImagesListAdapter.ImageViewHolder>() {
@@ -46,4 +46,6 @@ class ImagesListAdapter(
         holder.bind(images[position])
 
     fun getPictUrlImage(index: Int): PictUrlImage = images[index]
+
+    fun removeAt(index: Int) = images.removeAt(index)
 }

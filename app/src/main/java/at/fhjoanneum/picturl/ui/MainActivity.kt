@@ -22,6 +22,7 @@ import at.fhjoanneum.picturl.MAIN_ACTIVITY_RESULT_TAKE_PICTURE
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
+import at.fhjoanneum.picturl.service.UploadService
 import at.fhjoanneum.picturl.ui.adapter.ImageClickListener
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeController
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeListener
@@ -136,7 +137,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     private fun loadFilteredImages(title: String) {
         GlobalScope.launch(Dispatchers.Main) {
             recyclerView.adapter = ImagesListAdapter(
-                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getFiltered("%$title%"),
+                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getFiltered("%$title%").toMutableList(),
                 this@MainActivity
             )
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
@@ -146,7 +147,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     private fun loadImages() {
         GlobalScope.launch(Dispatchers.Main) {
             recyclerView.adapter = ImagesListAdapter(
-                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll(),
+                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll().toMutableList(),
                 this@MainActivity
             )
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
@@ -180,12 +181,15 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     override fun getContext(): Context = this
 
     override fun onRightSwipe(position: Int) {
+        val imageListAdapter = recyclerView.adapter as ImagesListAdapter
+        val image = imageListAdapter.getPictUrlImage(position)
+        imageListAdapter.removeAt(position)
+        imageListAdapter.notifyItemChanged(position)
+        imageListAdapter.notifyItemRangeChanged(position, imageListAdapter.itemCount+1)
+
         GlobalScope.launch(Dispatchers.Main) {
-            recyclerView.adapter = ImagesListAdapter(
-                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll(),
-                this@MainActivity
-            )
-            recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            UploadService.delete(image.deleteHash)
+            PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
         }
     }
 }
