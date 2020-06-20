@@ -111,7 +111,7 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     private fun showError() {
-        TODO("Not yet implemented")
+        Toast.makeText(applicationContext, "Something went wrong", Toast.LENGTH_SHORT).show()
     }
 
     private fun hideKeyboard(view: View) {
