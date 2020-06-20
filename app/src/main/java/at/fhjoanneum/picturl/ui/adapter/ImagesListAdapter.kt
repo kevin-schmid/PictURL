@@ -48,4 +48,6 @@ class ImagesListAdapter(
     fun getPictUrlImage(index: Int): PictUrlImage = images[index]
 
     fun removeAt(index: Int) = images.removeAt(index)
+
+    fun insertAt(index: Int, element: PictUrlImage) = images.add(index, element)
 }

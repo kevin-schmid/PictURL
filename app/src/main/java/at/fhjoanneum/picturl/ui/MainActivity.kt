@@ -27,6 +27,7 @@ import at.fhjoanneum.picturl.ui.adapter.ImageClickListener
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeController
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeListener
 import at.fhjoanneum.picturl.ui.adapter.ImagesListAdapter
+import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -187,9 +188,19 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
         imageListAdapter.notifyItemChanged(position)
         imageListAdapter.notifyItemRangeChanged(position, imageListAdapter.itemCount+1)
 
-        GlobalScope.launch(Dispatchers.Main) {
-            UploadService.delete(image.deleteHash)
-            PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
-        }
+        Snackbar
+            .make(recyclerView, "Image removed", Snackbar.LENGTH_LONG)
+            .setAction("UNDO") {
+                imageListAdapter.insertAt(position, image)
+                imageListAdapter.notifyItemInserted(position)
+            }.addCallback(object: Snackbar.Callback(){
+                override fun onDismissed(snackbar: Snackbar , event: Int) {
+                    if(event == DISMISS_EVENT_TIMEOUT)
+                    GlobalScope.launch(Dispatchers.Main) {
+                        UploadService.delete(image.deleteHash)
+                        PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
+                    }
+                }
+            }).show()
     }
 }
