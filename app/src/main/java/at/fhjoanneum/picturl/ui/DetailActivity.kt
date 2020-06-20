@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -69,7 +70,7 @@ class DetailActivity : AppCompatActivity() {
                 .putExtra(EXTRA_IMAGE_POSITION, position)
     }
 
-    fun toClipboard() {
+    fun toClipboard(v : View) {
         val tv = findViewById<Button>(R.id.detailButton)
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("link", tv.text)
