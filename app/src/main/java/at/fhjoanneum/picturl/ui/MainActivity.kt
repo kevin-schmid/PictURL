@@ -1,5 +1,6 @@
 package at.fhjoanneum.picturl.ui
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -17,6 +18,7 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import at.fhjoanneum.picturl.MAIN_ACTIVITY_INTENT_EXTRA_DELETED
 import at.fhjoanneum.picturl.MAIN_ACTIVITY_RESULT_PICK_IMAGE
 import at.fhjoanneum.picturl.MAIN_ACTIVITY_RESULT_TAKE_PICTURE
 import at.fhjoanneum.picturl.R
@@ -152,11 +154,17 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
                 this@MainActivity
             )
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            if(intent.hasExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED)) {
+                deleteItem(intent.getIntExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, -1))
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_CANCELED) {
+            return
+        }
         var uri = photoURI
         if (requestCode == MAIN_ACTIVITY_RESULT_PICK_IMAGE) {
             uri = data?.data!!
@@ -169,8 +177,8 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
         )
     }
 
-    override fun onItemClicked(item: PictUrlImage) =
-        startActivity(DetailActivity.createIntent(this, item))
+    override fun onItemClicked(position: Int, item: PictUrlImage) =
+        startActivity(DetailActivity.createIntent(this, item, position))
 
     override fun onItemLongClicked(item: PictUrlImage) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -181,25 +189,29 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
 
     override fun getContext(): Context = this
 
-    override fun onRightSwipe(position: Int) {
+    override fun onRightSwipe(position: Int) = deleteItem(position)
+
+    private fun deleteItem(position: Int) {
+        if(position == -1) {
+            return
+        }
         val imageListAdapter = recyclerView.adapter as ImagesListAdapter
         val image = imageListAdapter.getPictUrlImage(position)
         imageListAdapter.removeAt(position)
-        imageListAdapter.notifyItemChanged(position)
-        imageListAdapter.notifyItemRangeChanged(position, imageListAdapter.itemCount+1)
+        imageListAdapter.notifyItemRemoved(position)
 
         Snackbar
             .make(recyclerView, "Image removed", Snackbar.LENGTH_LONG)
             .setAction("UNDO") {
                 imageListAdapter.insertAt(position, image)
                 imageListAdapter.notifyItemInserted(position)
-            }.addCallback(object: Snackbar.Callback(){
+            }.addCallback(object: Snackbar.Callback() {
                 override fun onDismissed(snackbar: Snackbar , event: Int) {
                     if(event == DISMISS_EVENT_TIMEOUT)
-                    GlobalScope.launch(Dispatchers.Main) {
-                        UploadService.delete(image.deleteHash)
-                        PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
-                    }
+                        GlobalScope.launch(Dispatchers.Main) {
+                            UploadService.delete(image.deleteHash)
+                            PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
+                        }
                 }
             }).show()
     }

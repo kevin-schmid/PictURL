@@ -17,6 +17,11 @@
             android:layout_height="match_parent"
             tools:listitem="@layout/image_list_item"/>
 
+        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <com.leinardi.android.speeddial.SpeedDialView
             android:id="@+id/mainActionButton"
             android:layout_width="wrap_content"
@@ -24,6 +29,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="2dp"
             app:sdExpansionMode="top"
+            app:sdOverlayLayout="@id/overlay"
             app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24" />
 
     </FrameLayout>

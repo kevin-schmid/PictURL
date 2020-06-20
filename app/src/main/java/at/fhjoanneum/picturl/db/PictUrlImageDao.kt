@@ -12,6 +12,9 @@ interface PictUrlImageDao {
     @Query("select * from $PICTURL_IMAGE_TABLE_NAME")
     suspend fun getAll(): List<PictUrlImage>
 
+    @Query("select count(*) from $PICTURL_IMAGE_TABLE_NAME")
+    suspend fun getCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(image: PictUrlImage)
 
