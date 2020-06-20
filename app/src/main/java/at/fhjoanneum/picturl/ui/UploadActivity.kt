@@ -20,6 +20,7 @@ import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
 import at.fhjoanneum.picturl.service.UploadDto
 import at.fhjoanneum.picturl.service.UploadService
+import at.fhjoanneum.picturl.util.CheckConnectionUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 
@@ -54,10 +55,11 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             localImageUri = createThumbnail(imageBinary)
             findViewById<ImageView>(R.id.uploadImageView).setImageURI(localImageUri)
             findViewById<View>(R.id.uploadImageButton).setOnClickListener {
-                if(findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()){
-                    Toast.makeText(applicationContext,"Enter Title", Toast.LENGTH_SHORT).show()
-                }
-                else{
+                if (!CheckConnectionUtil.isConnected(this)) {
+                    Toast.makeText(applicationContext, "Offline", Toast.LENGTH_SHORT).show()
+                } else if (findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()) {
+                    Toast.makeText(applicationContext, "Enter Title", Toast.LENGTH_SHORT).show()
+                } else {
                     uploadImage(imageUri)
                 }
             }
