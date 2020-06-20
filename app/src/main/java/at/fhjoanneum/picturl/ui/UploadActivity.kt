@@ -84,8 +84,10 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val clip = ClipData.newPlainText("link", pictUrlImage.link)
             clipboard.setPrimaryClip(clip)
             Toast.makeText(applicationContext,"Copied to Clipboard", Toast.LENGTH_SHORT).show()
-            PictUrlDatabase.getDatabase(this@UploadActivity).imageDao().insert(pictUrlImage)
-            startActivity(DetailActivity.createIntent(this@UploadActivity, pictUrlImage))
+            val imageDao = PictUrlDatabase.getDatabase(this@UploadActivity).imageDao()
+            val insertPosition = imageDao.getCount()
+            imageDao.insert(pictUrlImage)
+            startActivity(DetailActivity.createIntent(this@UploadActivity, pictUrlImage, insertPosition))
         }
     }
 
