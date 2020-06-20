@@ -11,6 +11,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener {
     private lateinit var recyclerView: RecyclerView
     private var photoURI: Uri = Uri.EMPTY
+    private var positionToDelete = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,6 +134,13 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if(intent != null) {
+            positionToDelete = intent.getIntExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, -1)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         loadImages()
@@ -149,13 +158,20 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
 
     private fun loadImages() {
         GlobalScope.launch(Dispatchers.Main) {
+            val images = PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll().toMutableList()
             recyclerView.adapter = ImagesListAdapter(
-                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll().toMutableList(),
+                images,
                 this@MainActivity
             )
+            if(images.size == 0) {
+                findViewById<View>(R.id.mainNothingHereYet).visibility = View.VISIBLE
+            } else {
+                findViewById<View>(R.id.mainNothingHereYet).visibility = View.GONE
+            }
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-            if(intent.hasExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED)) {
-                deleteItem(intent.getIntExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, -1))
+            if(positionToDelete > -1) {
+                deleteItem(positionToDelete)
+                positionToDelete = -1
             }
         }
     }
@@ -207,7 +223,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
                 imageListAdapter.notifyItemInserted(position)
             }.addCallback(object: Snackbar.Callback() {
                 override fun onDismissed(snackbar: Snackbar , event: Int) {
-                    if(event == DISMISS_EVENT_TIMEOUT)
+                    if(event != DISMISS_EVENT_ACTION)
                         GlobalScope.launch(Dispatchers.Main) {
                             UploadService.delete(image.deleteHash)
                             PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
