@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import at.fhjoanneum.picturl.MAIN_ACTIVITY_INTENT_EXTRA_DELETED
 import at.fhjoanneum.picturl.R
 import at.fhjoanneum.picturl.model.PictUrlImage
+import at.fhjoanneum.picturl.util.CheckConnectionUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DetailActivity : AppCompatActivity() {
@@ -33,8 +34,14 @@ class DetailActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.detailItemDescr).text = imageDesc
 
         findViewById<FloatingActionButton>(R.id.detailActionButton).setOnClickListener {
-            startActivity(Intent(this@DetailActivity, MainActivity::class.java)
-                .putExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, position))
+            if (!CheckConnectionUtil.isConnected(this)) {
+                Toast.makeText(applicationContext, "Offline", Toast.LENGTH_SHORT).show()
+            } else {
+                startActivity(
+                    Intent(this@DetailActivity, MainActivity::class.java)
+                        .putExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, position)
+                )
+            }
         }
 
         findViewById<Button>(R.id.detailButton).setOnLongClickListener {
@@ -67,6 +74,6 @@ class DetailActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("link", tv.text)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this,"Copied to Clipboard", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
     }
 }
