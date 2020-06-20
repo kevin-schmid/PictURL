@@ -30,6 +30,7 @@ import at.fhjoanneum.picturl.ui.adapter.ImageClickListener
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeController
 import at.fhjoanneum.picturl.ui.adapter.ImageSwipeListener
 import at.fhjoanneum.picturl.ui.adapter.ImagesListAdapter
+import at.fhjoanneum.picturl.util.CheckConnectionUtil
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
         val speedDialView = findViewById<SpeedDialView>(R.id.mainActionButton)
         speedDialView.inflate(R.menu.menu_main_action)
         speedDialView.setOnActionSelectedListener { actionItem ->
-            when(actionItem.id) {
+            when (actionItem.id) {
                 R.id.actionFilePick -> dispatchPickImageIntent()
                 R.id.actionCamera -> dispatchTakePictureIntent()
             }
@@ -64,26 +65,22 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     }
 
     private fun dispatchPickImageIntent() {
-            val pickPhoto = Intent(
-                Intent.ACTION_OPEN_DOCUMENT,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            ).setType("image/*")
-            startActivityForResult(pickPhoto, MAIN_ACTIVITY_RESULT_PICK_IMAGE)
+        val pickPhoto = Intent(
+            Intent.ACTION_OPEN_DOCUMENT,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        ).setType("image/*")
+        startActivityForResult(pickPhoto, MAIN_ACTIVITY_RESULT_PICK_IMAGE)
     }
 
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(packageManager)?.also {
-                // Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
                 } catch (ex: IOException) {
-                    // Error occurred while creating the File
                     Log.e("err", "err", ex)
                     null
                 }
-                // Continue only if the File was successfully created
                 photoFile?.also {
                     photoURI = FileProvider.getUriForFile(
                         this,
@@ -110,25 +107,24 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main,menu)
+        menuInflater.inflate(R.menu.main, menu)
         val searchItem = menu?.findItem(R.id.menu_search)
-        if(searchItem!=null){
+        if (searchItem != null) {
             val searchView = searchItem.actionView as SearchView
-            searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
 
-                    if(newText!!.isNotEmpty()){
+                    if (newText!!.isNotEmpty()) {
                         loadFilteredImages(newText.toLowerCase())
-                    }else{
+                    } else {
                         loadImages()
                     }
                     return true
                 }
-
             })
         }
         return super.onCreateOptionsMenu(menu)
@@ -136,7 +132,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if(intent != null) {
+        if (intent != null) {
             positionToDelete = intent.getIntExtra(MAIN_ACTIVITY_INTENT_EXTRA_DELETED, -1)
         }
     }
@@ -149,7 +145,8 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     private fun loadFilteredImages(title: String) {
         GlobalScope.launch(Dispatchers.Main) {
             recyclerView.adapter = ImagesListAdapter(
-                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getFiltered("%$title%").toMutableList(),
+                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getFiltered("%$title%")
+                    .toMutableList(),
                 this@MainActivity
             )
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
@@ -158,18 +155,20 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
 
     private fun loadImages() {
         GlobalScope.launch(Dispatchers.Main) {
-            val images = PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll().toMutableList()
+            val images =
+                PictUrlDatabase.getDatabase(this@MainActivity).imageDao().getAll().toMutableList()
             recyclerView.adapter = ImagesListAdapter(
                 images,
                 this@MainActivity
             )
-            if(images.size == 0) {
+            if (images.size == 0) {
                 findViewById<View>(R.id.mainNothingHereYet).visibility = View.VISIBLE
             } else {
                 findViewById<View>(R.id.mainNothingHereYet).visibility = View.GONE
             }
             recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-            if(positionToDelete > -1) {
+
+            if (positionToDelete > -1) {
                 deleteItem(positionToDelete)
                 positionToDelete = -1
             }
@@ -178,7 +177,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_CANCELED) {
+        if (resultCode == Activity.RESULT_CANCELED) {
             return
         }
         var uri = photoURI
@@ -200,7 +199,7 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("link", item.link)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this,"Copied to Clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
     }
 
     override fun getContext(): Context = this
@@ -208,7 +207,11 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
     override fun onRightSwipe(position: Int) = deleteItem(position)
 
     private fun deleteItem(position: Int) {
-        if(position == -1) {
+        if (position == -1) {
+            return
+        }
+        if (!CheckConnectionUtil.isConnected(this)) {
+            Toast.makeText(applicationContext, "Offline", Toast.LENGTH_SHORT).show()
             return
         }
         val imageListAdapter = recyclerView.adapter as ImagesListAdapter
@@ -221,12 +224,13 @@ class MainActivity : AppCompatActivity(), ImageClickListener, ImageSwipeListener
             .setAction("UNDO") {
                 imageListAdapter.insertAt(position, image)
                 imageListAdapter.notifyItemInserted(position)
-            }.addCallback(object: Snackbar.Callback() {
-                override fun onDismissed(snackbar: Snackbar , event: Int) {
-                    if(event != DISMISS_EVENT_ACTION)
+            }.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(snackbar: Snackbar, event: Int) {
+                    if (event == DISMISS_EVENT_TIMEOUT)
                         GlobalScope.launch(Dispatchers.Main) {
                             UploadService.delete(image.deleteHash)
-                            PictUrlDatabase.getDatabase(this@MainActivity).imageDao().delete(image.id)
+                            PictUrlDatabase.getDatabase(this@MainActivity).imageDao()
+                                .delete(image.id)
                         }
                 }
             }).show()

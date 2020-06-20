@@ -20,6 +20,7 @@ import at.fhjoanneum.picturl.db.PictUrlDatabase
 import at.fhjoanneum.picturl.model.PictUrlImage
 import at.fhjoanneum.picturl.service.UploadDto
 import at.fhjoanneum.picturl.service.UploadService
+import at.fhjoanneum.picturl.util.CheckConnectionUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
 
@@ -38,7 +39,8 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         findViewById<EditText>(R.id.uploadEditTextDescr).setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 findViewById<FrameLayout>(R.id.uploadFrameLayout).visibility = View.GONE
-                findViewById<TextView>(R.id.uploadItemDescr).text = findViewById<EditText>(R.id.uploadEditTextDescr).text.toString()
+                findViewById<TextView>(R.id.uploadItemDescr).text =
+                    findViewById<EditText>(R.id.uploadEditTextDescr).text.toString()
                 hideKeyboard(v)
                 true
             } else {
@@ -54,10 +56,11 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             localImageUri = createThumbnail(imageBinary)
             findViewById<ImageView>(R.id.uploadImageView).setImageURI(localImageUri)
             findViewById<View>(R.id.uploadImageButton).setOnClickListener {
-                if(findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()){
-                    Toast.makeText(applicationContext,"Enter Title", Toast.LENGTH_SHORT).show()
-                }
-                else{
+                if (!CheckConnectionUtil.isConnected(this)) {
+                    Toast.makeText(applicationContext, "Offline", Toast.LENGTH_SHORT).show()
+                } else if (findViewById<EditText>(R.id.uploadEditText).text.toString().isEmpty()) {
+                    Toast.makeText(applicationContext, "Enter Title", Toast.LENGTH_SHORT).show()
+                } else {
                     uploadImage(imageUri)
                 }
             }
@@ -83,11 +86,17 @@ class UploadActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("link", pictUrlImage.link)
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(applicationContext,"Copied to Clipboard", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
             val imageDao = PictUrlDatabase.getDatabase(this@UploadActivity).imageDao()
             val insertPosition = imageDao.getCount()
             imageDao.insert(pictUrlImage)
-            startActivity(DetailActivity.createIntent(this@UploadActivity, pictUrlImage, insertPosition))
+            startActivity(
+                DetailActivity.createIntent(
+                    this@UploadActivity,
+                    pictUrlImage,
+                    insertPosition
+                )
+            )
         }
     }
 
